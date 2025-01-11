@@ -4,9 +4,9 @@ import { TSecret } from './secret';
 
 export const DiscordConfig = T.Object({
   server: T.String(),
-  onlinePing: T.Object({
+  pings: T.Object({
     channel: T.String(),
-    role: T.String(),
+    roles: T.Record(T.Union([T.Literal('online'), T.Literal('bet'), T.Literal('unlock')]), T.String()),
   }),
   reacjiRoles: T.Object({
     messageSnowflake: T.String(),
@@ -14,6 +14,7 @@ export const DiscordConfig = T.Object({
   }),
 });
 export type DiscordConfig = StaticDecode<typeof DiscordConfig>;
+export type PingRoles = keyof DiscordConfig['pings']['roles'];
 
 export const DiscordSecrets = T.Object({
   token: TSecret('token', T.String()),

@@ -4,6 +4,7 @@ import { TSecret } from './secret';
 
 export const TwitchConfig = T.Object({
   channel: T.String(),
+  botId: T.String(),
 });
 export type TwitchConfig = StaticDecode<typeof TwitchConfig>;
 

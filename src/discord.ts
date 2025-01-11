@@ -11,7 +11,7 @@ import {
   User,
 } from 'discord.js';
 
-import type { DiscordConfig, DiscordSecrets } from './config/_discord';
+import type { DiscordConfig, DiscordSecrets, PingRoles } from './config/_discord';
 import { logger } from './util';
 
 export type DiscordInit = {
@@ -20,15 +20,15 @@ export type DiscordInit = {
 };
 
 export type Discord = {
-  getPingRole: () => Role | '';
-  announce: (text: string) => Promise<void>;
+  getPingRole: (role: PingRoles) => Role | '';
+  announce: (text: string) => Promise<boolean>;
   shutdown: () => Promise<void>;
 };
 
 export const initDiscord = async ({ config, secrets }: DiscordInit): Promise<Discord> => {
   const log = logger('discord');
 
-  const onlinePingChannel = config.onlinePing.channel;
+  const pingChannel = config.pings.channel;
   const discordServer = config.server;
   const token = secrets.token;
 
@@ -53,29 +53,32 @@ export const initDiscord = async ({ config, secrets }: DiscordInit): Promise<Dis
   // fill role cache
   const rolesCache = await guild.roles.fetch(undefined);
 
-  const getPingRole = () => {
-    const lcase = config.onlinePing.role.toLowerCase();
+  const getPingRole = (role: PingRoles) => {
+    const lcase = config.pings.roles[role].toLowerCase();
     return rolesCache.find(role => role.name.toLowerCase() === lcase) ?? '';
   };
 
-  const announce = async (text: string) => {
+  const announce = async (text: string): Promise<boolean> => {
     const trimmed = text.trim().replace(/^\s+/gm, '\n');
 
-    const channel = await client.channels.fetch(onlinePingChannel);
+    const channel = await client.channels.fetch(pingChannel);
     if (!channel) {
       log.error('[announce]: channel is undefined');
-      return;
+      return false;
     }
 
     if (!channel.isSendable()) {
       log.error('[announce]: channel is not sendable');
-      return;
+      return false;
     }
 
     try {
       await channel.send(trimmed);
+      // console.log(`---\n${trimmed}\n---`);
+      return true;
     } catch (e) {
       log.error('[announce]: failed to send', e);
+      return false;
     }
   };
 
