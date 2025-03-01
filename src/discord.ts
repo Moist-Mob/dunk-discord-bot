@@ -2,6 +2,7 @@ import {
   Client,
   Events,
   GatewayIntentBits,
+  GuildEmoji,
   GuildMember,
   MessageReaction,
   PartialMessageReaction,
@@ -22,6 +23,7 @@ export type DiscordInit = {
 export type Discord = {
   getPingRole: (role: PingRoles) => Role | '';
   announce: (text: string) => Promise<boolean>;
+  emoji: (name: string) => GuildEmoji | string;
   shutdown: () => Promise<void>;
 };
 
@@ -52,6 +54,9 @@ export const initDiscord = async ({ config, secrets }: DiscordInit): Promise<Dis
 
   // fill role cache
   const rolesCache = await guild.roles.fetch(undefined);
+
+  // fill the emoji cache
+  const emojiCache = await guild.emojis.fetch();
 
   const getPingRole = (role: PingRoles) => {
     const lcase = config.pings.roles[role].toLowerCase();
@@ -140,8 +145,11 @@ export const initDiscord = async ({ config, secrets }: DiscordInit): Promise<Dis
     }
   });
 
+  const emoji = (name: string): GuildEmoji | string => emojiCache.find(v => v.name === name) ?? `:${name}:`;
+
   return {
     getPingRole,
+    emoji,
     announce,
     shutdown: async (): Promise<void> => {
       await client.destroy();

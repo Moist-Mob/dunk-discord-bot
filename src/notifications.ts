@@ -14,7 +14,7 @@ export interface Matcher<T extends Record<string, string>> {
   format(data: T): string;
 }
 
-export const initNotifications = ({ getPingRole }: Discord) => {
+export const initNotifications = ({ getPingRole, emoji }: Discord) => {
   const matchGroup = <
     const T extends NotificationType,
     const Ks extends string[],
@@ -53,7 +53,9 @@ export const initNotifications = ({ getPingRole }: Discord) => {
     NotificationType.BetFinalized,
     betFinal,
     ({ betResult, yes, no }) =>
-      betResult === 'win' ? `${yes} Big brainers with their 200iq plays once again` : `${no} Tiny brainers won`,
+      betResult === 'win'
+        ? `${yes} Big brainers with their 200iq plays once again ${emoji('dnkHappy')}`
+        : `${no} Tiny brainers won ${emoji('dnkAngry')}`,
     'betResult',
     'yes',
     'no'
