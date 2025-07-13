@@ -27,18 +27,6 @@ export const initTwurple = async ({ secrets }: TwurpleInit): Promise<TwurpleRetu
     clientSecret: appCredentials.clientSecret.unwrap(),
   });
 
-  const tokenUserId = await authProvider.addUserForToken(
-    {
-      accessToken: userCredentials.accessToken.unwrap(),
-      refreshToken: userCredentials.refreshToken.unwrap(),
-      scope: userCredentials.scope,
-      obtainmentTimestamp: userCredentials.obtainmentTimestamp,
-      expiresIn: userCredentials.expiresIn,
-    },
-    ['chat']
-  );
-  log.info(`addUserForToken: ${tokenUserId}`);
-
   authProvider.onRefresh(async (userId, token) => {
     try {
       await updateUserCredentials({
@@ -57,6 +45,18 @@ export const initTwurple = async ({ secrets }: TwurpleInit): Promise<TwurpleRetu
   authProvider.onRefreshFailure(reason => {
     log.error(`failed to refresh token: ${reason}`);
   });
+
+  const tokenUserId = await authProvider.addUserForToken(
+    {
+      accessToken: userCredentials.accessToken.unwrap(),
+      refreshToken: userCredentials.refreshToken.unwrap(),
+      scope: userCredentials.scope,
+      obtainmentTimestamp: userCredentials.obtainmentTimestamp,
+      expiresIn: userCredentials.expiresIn,
+    },
+    ['chat']
+  );
+  log.info(`addUserForToken: ${tokenUserId}`);
 
   const apiClient = new ApiClient({ authProvider });
 
