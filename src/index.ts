@@ -10,6 +10,7 @@ import { initDiscord } from './discord';
 import { initEventSub } from './eventsub';
 import { logger } from './util';
 import { initNotifications, NotificationType } from './notifications';
+import { initYoutube } from './youtube';
 
 (async () => {
   const log = logger('main');
@@ -22,6 +23,17 @@ import { initNotifications, NotificationType } from './notifications';
   });
 
   const { getPingRole, announce, shutdown: shutdownDiscord } = discord;
+
+  const { onVideo, shutdown: shutdownYoutube } = await initYoutube({
+    config: config.youtube,
+  });
+  onVideo(async notif => {
+    announce(`
+      ${getPingRole('youtube')} New video just dropped ${notif.relTime}
+
+      ${notif.url}
+    `);
+  });
 
   const { apiClient, authProvider, tokenUserId } = await initTwurple({
     secrets: secrets.twitch,
