@@ -6,7 +6,16 @@ export const DiscordConfig = T.Object({
   server: T.String(),
   pings: T.Object({
     channel: T.String(),
-    roles: T.Record(T.Union([T.Literal('online'), T.Literal('bet'), T.Literal('unlock')]), T.String()),
+    roles: T.Record(
+      T.Union([
+        // prettier-ignore
+        T.Literal('online'),
+        T.Literal('bet'),
+        T.Literal('unlock'),
+        T.Literal('youtube'),
+      ]),
+      T.String()
+    ),
   }),
   reacjiRoles: T.Object({
     messageSnowflake: T.String(),

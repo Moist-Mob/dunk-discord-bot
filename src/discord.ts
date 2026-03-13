@@ -78,8 +78,8 @@ export const initDiscord = async ({ config, secrets }: DiscordInit): Promise<Dis
     }
 
     try {
-      await channel.send(trimmed);
-      // console.log(`---\n${trimmed}\n---`);
+      // await channel.send(trimmed);
+      console.log(`---\n${trimmed}\n---`);
       return true;
     } catch (e) {
       log.error('[announce]: failed to send', e);

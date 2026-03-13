@@ -6,10 +6,12 @@ import { Secret } from './secret';
 import { FileSource } from './file_source';
 import { TwitchConfig, TwitchSecrets, UserCredentials } from './_twitch';
 import { DiscordConfig, DiscordSecrets } from './_discord';
+import { YoutubeConfig } from './_youtube';
 
 const Config = T.Object({
   twitch: TwitchConfig,
   discord: DiscordConfig,
+  youtube: YoutubeConfig,
 });
 
 const Secrets = T.Object({
